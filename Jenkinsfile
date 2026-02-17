@@ -2,11 +2,22 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                    args '-u root --dns 8.8.8.8' 
+                }
+            }
             steps {
-                echo 'Hello World'
-                sh 'echo "Hello from Jenkins"'
-                sh 'whoami'
+                sh '''
+                    ls -la 
+                    node --version
+                    npm install --no-audit
+                    npm run build 
+                    ls -la
+                '''
             }
         }
     }
